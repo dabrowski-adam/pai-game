@@ -2,6 +2,8 @@ package com.adamdabrowski.game;
 
 import com.adamdabrowski.server.ClassConfig;
 import com.adamdabrowski.server.IConfig;
+import com.adamdabrowski.server.Message;
+import com.adamdabrowski.server.MessageType;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -55,9 +57,12 @@ public class Game extends ApplicationAdapter {
 
 		batch.begin();
 		font.draw(batch, logic.GetMessages(), w - 200 - 10, h - 10, 200, Align.left, true);
+
+		String lobbyMsg = logic.isInLobby ? "Will join next game" : "Will not join next game";
+		font.draw(batch, lobbyMsg, w - 200 - 10, 30, 200, Align.center, false);
 		batch.end();
 
-		// Input
+		// Chat input
 		if (!logic.isChatOpen && Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
 			logic.OpenChat();
 
@@ -67,11 +72,19 @@ public class Game extends ApplicationAdapter {
 				Gdx.input.getTextInput(chatInput, "Send chat message", "Hello!", "...");
 			}
 		}
+
+		// Lobby toggle
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			if (logic.isInLobby) {
+				actionQueue.QueueAction(new Message(MessageType.LOBBY_LEAVE, ""));
+			} else {
+				actionQueue.QueueAction(new Message(MessageType.LOBBY_JOIN, ""));
+			}
+		}
 	}
 	
 	@Override
 	public void dispose () {
-//		stage.dispose();
 		batch.dispose();
 		font.dispose();
 //		img.dispose();

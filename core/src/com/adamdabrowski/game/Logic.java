@@ -14,7 +14,6 @@ public class Logic {
     // Client state
     boolean isChatOpen;
 
-
     public static Logic getInstance() { return instance; }
 
     private Logic() {

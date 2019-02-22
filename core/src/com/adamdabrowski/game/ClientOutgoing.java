@@ -26,14 +26,16 @@ public class ClientOutgoing implements Runnable {
                         Message message = messages.poll();
                         if (message == null) { continue; }
 
-                        switch (message.type) {
-                            case LOGIN:
-                                outputStream.writeObject(new Message(MessageType.LOGIN, message.payload));
-                                break;
-                            case CHAT:
-                                outputStream.writeObject(new Message(MessageType.CHAT, message.payload));
-                                break;
-                        }
+                        outputStream.writeObject(message);
+
+//                        switch (message.type) {
+//                            case LOGIN:
+//                                outputStream.writeObject(new Message(MessageType.LOGIN, message.payload));
+//                                break;
+//                            case CHAT:
+//                                outputStream.writeObject(new Message(MessageType.CHAT, message.payload));
+//                                break;
+//                        }
 //                    Thread.sleep(1000);
 //                    outputStream.writeObject(new Message(MessageType.CHAT, "HELLO FROM THE CLIENT SIDE"));
                 }

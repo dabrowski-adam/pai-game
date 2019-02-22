@@ -36,6 +36,12 @@ public class Session implements Runnable, AutoCloseable {
                     case LOGIN:
                         sendMessage(new Message(MessageType.LOGGED_IN, ""));
                         break;
+                    case LOBBY_JOIN:
+                        sendMessage(new Message(MessageType.LOBBY_JOIN, ""));
+                        break;
+                    case LOBBY_LEAVE:
+                        sendMessage(new Message(MessageType.LOBBY_LEAVE, ""));
+                        break;
                     case BYE:
                         sendMessage(new Message(MessageType.INFO, "Good bye."));
                         break loop;
