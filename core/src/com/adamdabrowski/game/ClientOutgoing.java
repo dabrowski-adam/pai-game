@@ -10,9 +10,9 @@ import java.util.Queue;
 
 public class ClientOutgoing implements Runnable {
     private ObjectOutputStream outputStream;
-    private Queue<String> messages;
+    private Queue<Message> messages;
 
-    ClientOutgoing(ObjectOutputStream outputStream, Queue<String> messages) {
+    ClientOutgoing(ObjectOutputStream outputStream, Queue<Message> messages) {
         this.outputStream = outputStream;
         this.messages = messages;
     }
@@ -23,10 +23,17 @@ public class ClientOutgoing implements Runnable {
                 outputStream.writeObject(new Message(MessageType.HELLO, ""));
 
                 while (!Thread.interrupted()) {
-                    if (messages.size() > 0) {
-                        String message = messages.remove();
-                        outputStream.writeObject(new Message(MessageType.CHAT, message));
-                    }
+                        Message message = messages.poll();
+                        if (message == null) { continue; }
+
+                        switch (message.type) {
+                            case LOGIN:
+                                outputStream.writeObject(new Message(MessageType.LOGIN, message.payload));
+                                break;
+                            case CHAT:
+                                outputStream.writeObject(new Message(MessageType.CHAT, message.payload));
+                                break;
+                        }
 //                    Thread.sleep(1000);
 //                    outputStream.writeObject(new Message(MessageType.CHAT, "HELLO FROM THE CLIENT SIDE"));
                 }

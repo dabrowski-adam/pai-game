@@ -11,9 +11,9 @@ public class ClientIncoming implements Runnable {
     private ObjectInputStream inputStream;
     private Logic logic;
 
-    ClientIncoming(ObjectInputStream inputStream) {
+    ClientIncoming(ObjectInputStream inputStream, Logic logic) {
         this.inputStream = inputStream;
-        logic = Logic.getInstance();
+        this.logic = logic;
     }
 
     @Override
@@ -22,10 +22,23 @@ public class ClientIncoming implements Runnable {
             try {
                 Object message = inputStream.readObject();
                 if (message instanceof Message) {
-                    if (((Message) message).type == MessageType.CHAT) {
-                        logic.DisplayMessage(((Message) message).payload);
+                    switch (((Message) message).type) {
+                        case CHAT:
+                            logic.DisplayMessage(((Message) message).payload);
+                            break;
+                        case LOGGED_IN:
+                            logic.isLoggedIn = true;
+                            break;
+                        case LOGGED_OUT:
+                            logic.isLoggedIn = false;
+                            break;
+                        case LOBBY_JOIN:
+                            logic.isInLobby = true;
+                            break;
+                        case LOBBY_LEAVE:
+                            logic.isInLobby = false;
+                            break;
                     }
-//                    System.out.printf("Response: %s\n\n", ((Message) message).payload);
                 } else {
 //                    System.out.printf("Response: %s\n\n", message.toString());
                 }

@@ -33,6 +33,9 @@ public class Session implements Runnable, AutoCloseable {
                     case HELLO:
                         stateManager.registerListener(this);
                         break;
+                    case LOGIN:
+                        sendMessage(new Message(MessageType.LOGGED_IN, ""));
+                        break;
                     case BYE:
                         sendMessage(new Message(MessageType.INFO, "Good bye."));
                         break loop;

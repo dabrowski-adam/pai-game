@@ -1,24 +1,30 @@
 package com.adamdabrowski.game;
 
+import com.adamdabrowski.server.Message;
+import com.adamdabrowski.server.MessageType;
 import com.badlogic.gdx.Input;
 
-import java.util.Queue;
-
 public class ChatInput implements Input.TextInputListener {
-    Queue<String> messages;
+    Logic logic;
+    ActionQueue actionQueue;
 
-    public ChatInput(Queue<String> messages) {
-        this.messages = messages;
+    public ChatInput() {
+        logic = Logic.getInstance();
+        actionQueue = ActionQueue.getInstance();
     }
 
     @Override
     public void input(String text) {
-        messages.add(text);
-        Logic.getInstance().CloseChat();
+        if (logic.isLoggedIn) {
+            actionQueue.QueueAction(new Message(MessageType.CHAT, text));
+        } else {
+            actionQueue.QueueAction(new Message(MessageType.LOGIN, text));
+        }
+        logic.CloseChat();
     }
 
     @Override
     public void canceled() {
-        Logic.getInstance().CloseChat();
+        logic.CloseChat();
     }
 }

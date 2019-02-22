@@ -5,22 +5,31 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Logic {
     private static Logic instance = new Logic();
-    private static final Queue<String> chat;
-    boolean isChatOpen = false;
 
-    static {
-        chat = new LinkedBlockingQueue<String>(5);
-    }
+    // Server state
+    private final Queue<String> chat;
+    boolean isLoggedIn;
+    boolean isInLobby;
+
+    // Client state
+    boolean isChatOpen;
+
 
     public static Logic getInstance() { return instance; }
 
-    private Logic() { }
+    private Logic() {
+        chat = new LinkedBlockingQueue<String>(5);
+        isLoggedIn = false;
+        isInLobby = false;
+
+        isChatOpen = false;
+    }
 
     public void Update(float deltaTime) {
 
     }
 
-    public synchronized void DisplayMessage(String message) {
+    public void DisplayMessage(String message) {
         if (chat.size() == 5) {
             chat.remove();
         }
