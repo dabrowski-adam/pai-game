@@ -1,0 +1,7 @@
+<config>
+    <port>10000</port>
+    <host>127.0.0.1</host>
+    <cooldown>2000</cooldown>
+    <radius>25</radius>
+    <speed>5</speed>
+</config>
