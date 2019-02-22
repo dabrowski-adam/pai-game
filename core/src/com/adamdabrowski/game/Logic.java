@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Logic {
     private static Logic instance = new Logic();
     private static final Queue<String> chat;
+    boolean isChatOpen = false;
 
     static {
         chat = new LinkedBlockingQueue<String>(5);
@@ -33,4 +34,8 @@ public class Logic {
         }
         return stringBuilder.toString();
     }
+
+    public void OpenChat() { isChatOpen = true; }
+
+    public void CloseChat() { isChatOpen = false; }
 }

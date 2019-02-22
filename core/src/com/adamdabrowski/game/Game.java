@@ -4,32 +4,31 @@ import com.adamdabrowski.server.ClassConfig;
 import com.adamdabrowski.server.IConfig;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Game extends ApplicationAdapter {
 //	Stage stage;
 //	TextArea textArea;
 	SpriteBatch batch;
 	BitmapFont font;
+	ChatInput chatInput;
 //	Texture img;
 
+	Queue<String> messages;
 	Logic logic;
-	
+
 	@Override
 	public void create () {
 //		stage = new Stage(new ScreenViewport());
@@ -40,12 +39,14 @@ public class Game extends ApplicationAdapter {
 //		textArea.setPosition(0, 0);
 //		stage.addActor(textArea);
 
+		messages = new LinkedBlockingQueue<String>();
+		logic = Logic.getInstance();
+
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		font.setColor(Color.WHITE);
+		chatInput = new ChatInput(messages);
 //		img = new Texture("badlogic.jpg");
-
-		logic = Logic.getInstance();
 
 		Connect();
 	}
@@ -67,6 +68,12 @@ public class Game extends ApplicationAdapter {
 		batch.begin();
 		font.draw(batch, logic.GetMessages(), w - 200 - 10, h - 10, 200, Align.left, true);
 		batch.end();
+
+		// Input
+		if (!logic.isChatOpen && Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+			logic.OpenChat();
+			Gdx.input.getTextInput(chatInput, "Send chat message", "Hello!", "...");
+		}
 	}
 	
 	@Override
@@ -90,7 +97,7 @@ public class Game extends ApplicationAdapter {
 
 
 			Thread incoming = new Thread(new ClientIncoming(inputStream));
-			Thread outgoing = new Thread(new ClientOutgoing(outputStream));
+			Thread outgoing = new Thread(new ClientOutgoing(outputStream, messages));
 
 			incoming.start();
 			outgoing.start();
