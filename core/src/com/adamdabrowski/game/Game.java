@@ -38,6 +38,8 @@ public class Game extends ApplicationAdapter {
 		chatInput = new ChatInput();
 //		img = new Texture("badlogic.jpg");
 
+		Gdx.input.setInputProcessor(new GameInput(logic, actionQueue, chatInput));
+
 		Connect();
 	}
 
@@ -61,26 +63,6 @@ public class Game extends ApplicationAdapter {
 		String lobbyMsg = logic.isInLobby ? "Will join next game" : "Will not join next game";
 		font.draw(batch, lobbyMsg, w - 200 - 10, 30, 200, Align.center, false);
 		batch.end();
-
-		// Chat input
-		if (!logic.isChatOpen && Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
-			logic.OpenChat();
-
-			if (!logic.isLoggedIn) {
-				Gdx.input.getTextInput(chatInput, "Enter nickname", "John Smith", "...");
-			} else {
-				Gdx.input.getTextInput(chatInput, "Send chat message", "Hello!", "...");
-			}
-		}
-
-		// Lobby toggle
-		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			if (logic.isInLobby) {
-				actionQueue.QueueAction(new Message(MessageType.LOBBY_LEAVE, ""));
-			} else {
-				actionQueue.QueueAction(new Message(MessageType.LOBBY_JOIN, ""));
-			}
-		}
 	}
 	
 	@Override
