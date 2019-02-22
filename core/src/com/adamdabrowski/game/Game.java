@@ -1,9 +1,6 @@
 package com.adamdabrowski.game;
 
-import com.adamdabrowski.server.ClassConfig;
-import com.adamdabrowski.server.IConfig;
-import com.adamdabrowski.server.Message;
-import com.adamdabrowski.server.MessageType;
+import com.adamdabrowski.server.*;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -24,7 +21,6 @@ public class Game extends ApplicationAdapter {
 	ShapeRenderer shapeRenderer;
 	BitmapFont font;
 	ChatInput chatInput;
-//	Texture img;
 
 	Logic logic;
 	ActionQueue actionQueue;
@@ -37,9 +33,7 @@ public class Game extends ApplicationAdapter {
 		shapeRenderer = new ShapeRenderer();
 		batch = new SpriteBatch();
 		font = new BitmapFont();
-		font.setColor(Color.WHITE);
 		chatInput = new ChatInput();
-//		img = new Texture("badlogic.jpg");
 
 		Gdx.input.setInputProcessor(new GameInput(logic, actionQueue, chatInput));
 
@@ -60,28 +54,61 @@ public class Game extends ApplicationAdapter {
 
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 		// Ground
 		shapeRenderer.setColor(Color.GREEN);
-		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 		shapeRenderer.circle(w / 2, h / 2, logic.gameState.radius);
+		// Players
+		for (Player player : logic.gameState.players) {
+			if (player.isAlive) {
+				shapeRenderer.setColor(Color.BLUE);
+			} else {
+				shapeRenderer.setColor(Color.RED);
+			}
+			shapeRenderer.circle(w / 2 + player.position.x, h / 2 + player.position.y, 5f);
+		}
 		shapeRenderer.end();
 
 		batch.begin();
 		// Chat history
+		font.setColor(Color.WHITE);
 		font.draw(batch, logic.GetMessages(), w - 200 - 10, h - 10, 200, Align.left, true);
 		// Lobby status
+		font.setColor(Color.WHITE);
 		String lobbyMsg = logic.isInLobby ? "Will join next game" : "Will not join next game";
 		font.draw(batch, lobbyMsg, w - 200 - 10, 30, 200, Align.center, false);
+		// Player names
+		font.setColor(Color.WHITE);
+		for (Player player : logic.gameState.players) {
+			if (player.isAlive) {
+				float width = 50;
+				font.draw(batch, player.name, w / 2 + player.position.x - width / 2, h / 2 + player.position.y + 30, width, Align.center, false);
+			}
+		}
 		batch.end();
 
-
+		// Input
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+			actionQueue.QueueAction(new Message(MessageType.GO_LEFT, ""));
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+			actionQueue.QueueAction(new Message(MessageType.GO_RIGHT, ""));
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+			actionQueue.QueueAction(new Message(MessageType.GO_UP, ""));
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+			actionQueue.QueueAction(new Message(MessageType.GO_DOWN, ""));
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+			actionQueue.QueueAction(new Message(MessageType.ATTACK, ""));
+		}
 	}
 	
 	@Override
 	public void dispose () {
 		batch.dispose();
 		font.dispose();
-//		img.dispose();
 	}
 
 	private void Connect() {

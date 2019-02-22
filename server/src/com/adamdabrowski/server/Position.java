@@ -1,8 +1,10 @@
 package com.adamdabrowski.server;
 
-public class Position {
-    public final float x;
-    public final float y;
+import java.io.Serializable;
+
+public class Position implements Serializable {
+    public float x;
+    public float y;
 
     public Position(float x, float y) {
         this.x = x;

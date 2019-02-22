@@ -1,8 +1,9 @@
 package com.adamdabrowski.server;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class GameState {
+public class GameState implements Serializable {
     public final List<Player> players;
     public final float radius;
 

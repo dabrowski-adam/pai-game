@@ -7,12 +7,12 @@ public class StateManager {
     private static StateManager instance = new StateManager();
     private static List<Session> listeners = new ArrayList<>();
 
-    private List<Session> lobby = new ArrayList<>();
+    public List<Session> lobby = new ArrayList<>();
     public boolean isGame = false;
 
     public static StateManager getInstance() { return instance; }
 
-    private  StateManager() { }
+    private StateManager() { }
 
     public synchronized void registerListener(Session session) {
         if (!listeners.contains(session)) {
@@ -39,11 +39,6 @@ public class StateManager {
     public synchronized void JoinLobby(Session session) {
         if (!lobby.contains(session)) {
             lobby.add(session);
-        }
-
-        // TODO: Read from config
-        if (lobby.size() >= 2 - 1 && !isGame) {
-            // TODO: Move players from lobby to game
         }
     }
 

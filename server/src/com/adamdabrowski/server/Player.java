@@ -1,10 +1,15 @@
 package com.adamdabrowski.server;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
+    public String name;
     public boolean isAlive = true;
     public Position position;
+    public long timeSinceAttack = 0;
 
-    public Player(float x, float y) {
+    public Player(String name, float x, float y) {
+        this.name = name;
         position = new Position(x, y);
     }
 }

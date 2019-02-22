@@ -30,9 +30,9 @@ public class Logic {
         isChatOpen = false;
     }
 
-    public void Update(float deltaTime) {
-
-    }
+//    public void Update(float deltaTime) {
+//
+//    }
 
     public void DisplayMessage(String message) {
         if (chat.size() == 5) {

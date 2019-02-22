@@ -6,10 +6,13 @@ import java.net.Socket;
 
 public class Server {
     public static void main(String[] args) {
-        IConfig config = new ClassConfig();
+        final int PORT = XMLConfig.getInstance().port;
 
-        try (ServerSocket server = new ServerSocket(config.GetPort())) {
-            System.out.printf("Listening on port %d.\n", config.GetPort());
+        Thread gameThread = new Thread(new Game());
+        gameThread.start();
+
+        try (ServerSocket server = new ServerSocket(PORT)) {
+            System.out.printf("Listening on port %d.\n", PORT);
 
             do {
                 try {

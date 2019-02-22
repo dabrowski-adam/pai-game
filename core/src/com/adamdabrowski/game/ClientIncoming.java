@@ -2,7 +2,6 @@ package com.adamdabrowski.game;
 
 import com.adamdabrowski.server.GameState;
 import com.adamdabrowski.server.Message;
-import com.adamdabrowski.server.MessageType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

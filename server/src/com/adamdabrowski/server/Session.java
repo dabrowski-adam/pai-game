@@ -6,6 +6,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.time.LocalTime;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Session implements Runnable, AutoCloseable {
     private Socket client;
@@ -13,6 +15,10 @@ public class Session implements Runnable, AutoCloseable {
     private ObjectOutputStream output;
 
     private StateManager stateManager;
+
+    public String name = null;
+    public final Queue<Message> inputQueue = new ConcurrentLinkedQueue<>();
+
 
     Session(Socket client) throws IOException {
         this.client = client;
@@ -34,12 +40,14 @@ public class Session implements Runnable, AutoCloseable {
                         stateManager.registerListener(this);
                         break;
                     case LOGIN:
-                        id = msg.payload + client.getInetAddress().toString();
+                        name = msg.payload + client.getInetAddress().toString();
                         sendMessage(new Message(MessageType.LOGGED_IN, ""));
                         break;
                     case LOBBY_JOIN:
-                        stateManager.JoinLobby(this);
-                        sendMessage(new Message(MessageType.LOBBY_JOIN, ""));
+                        if (name != null) {
+                            stateManager.JoinLobby(this);
+                            sendMessage(new Message(MessageType.LOBBY_JOIN, ""));
+                        }
                         break;
                     case LOBBY_LEAVE:
                         stateManager.LeaveLobby(this);
@@ -49,7 +57,17 @@ public class Session implements Runnable, AutoCloseable {
                         sendMessage(new Message(MessageType.INFO, "Good bye."));
                         break loop;
                     case CHAT:
-                        stateManager.WriteToChat(id + ": " + msg.payload);
+                        if (name != null) {
+                            stateManager.WriteToChat(name + ": " + msg.payload);
+                        }
+                        break;
+                    case GO_LEFT:
+                    case GO_RIGHT:
+                    case GO_UP:
+                    case GO_DOWN:
+                    case ATTACK:
+                        inputQueue.add(msg);
+                        break;
                     default:
                         sendMessage(new Message(MessageType.NYI, "Not yet implemented."));
                         break;
@@ -96,7 +114,7 @@ public class Session implements Runnable, AutoCloseable {
         try {
             output.writeObject(gameState);
         } catch (IOException e) {
-            System.err.printf("Exception caught: %s\n", e);
+//            System.err.printf("Exception caught: %s\n", e);
         }
     }
 
