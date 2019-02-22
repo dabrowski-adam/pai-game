@@ -30,11 +30,14 @@ public class Session implements Runnable, AutoCloseable {
             loop: for (Message msg = readMessage(); msg != null; msg = readMessage()) {
                 System.out.printf("%s :: %s | %s\n", id, msg.type, msg.payload);
                 switch (msg.type) {
+                    case HELLO:
+                        stateManager.registerListener(this);
+                        break;
                     case BYE:
                         sendMessage(new Message(MessageType.INFO, "Good bye."));
                         break loop;
                     case CHAT:
-                        sendMessage(new Message(MessageType.CHAT, id + ": " + msg.payload));
+                        stateManager.WriteToChat(id + ": " + msg.payload);
                     default:
                         sendMessage(new Message(MessageType.NYI, "Not yet implemented."));
                         break;
@@ -55,6 +58,8 @@ public class Session implements Runnable, AutoCloseable {
             } catch (Exception e) {
                 System.err.printf("Exception caught: %s\n", e);
             }
+
+            // TODO: Unregister from StateManager
         }
     }
 
@@ -73,5 +78,13 @@ public class Session implements Runnable, AutoCloseable {
 
     private void sendMessage(Message message) throws IOException {
         output.writeObject(message);
+    }
+
+    public void sendChatMessage(String message) {
+        try {
+            sendMessage(new Message(MessageType.CHAT, message));
+        } catch (IOException e) {
+            System.err.printf("Exception caught: %s\n", e);
+        }
     }
 }

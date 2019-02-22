@@ -16,15 +16,17 @@ public class ClientOutgoing implements Runnable {
 
     @Override
     public void run() {
-        while (!Thread.interrupted()) {
             try {
-                Thread.sleep(1000);
-                outputStream.writeObject(new Message(MessageType.CHAT, "HELLO FROM THE CLIENT SIDE"));
+                outputStream.writeObject(new Message(MessageType.HELLO, ""));
+
+                while (!Thread.interrupted()) {
+                    Thread.sleep(1000);
+                    outputStream.writeObject(new Message(MessageType.CHAT, "HELLO FROM THE CLIENT SIDE"));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
     }
 }
