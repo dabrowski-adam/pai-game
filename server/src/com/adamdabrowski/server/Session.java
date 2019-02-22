@@ -34,12 +34,15 @@ public class Session implements Runnable, AutoCloseable {
                         stateManager.registerListener(this);
                         break;
                     case LOGIN:
+                        id = msg.payload + client.getInetAddress().toString();
                         sendMessage(new Message(MessageType.LOGGED_IN, ""));
                         break;
                     case LOBBY_JOIN:
+                        stateManager.JoinLobby(this);
                         sendMessage(new Message(MessageType.LOBBY_JOIN, ""));
                         break;
                     case LOBBY_LEAVE:
+                        stateManager.LeaveLobby(this);
                         sendMessage(new Message(MessageType.LOBBY_LEAVE, ""));
                         break;
                     case BYE:
@@ -87,6 +90,14 @@ public class Session implements Runnable, AutoCloseable {
 
     private void sendMessage(Message message) throws IOException {
         output.writeObject(message);
+    }
+
+    public void sendGameState(GameState gameState) {
+        try {
+            output.writeObject(gameState);
+        } catch (IOException e) {
+            System.err.printf("Exception caught: %s\n", e);
+        }
     }
 
     public void sendChatMessage(String message) {

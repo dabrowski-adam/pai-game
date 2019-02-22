@@ -1,5 +1,6 @@
 package com.adamdabrowski.game;
 
+import com.adamdabrowski.server.GameState;
 import com.adamdabrowski.server.Message;
 import com.adamdabrowski.server.MessageType;
 
@@ -39,6 +40,8 @@ public class ClientIncoming implements Runnable {
                             logic.isInLobby = false;
                             break;
                     }
+                } else if (message instanceof GameState) {
+                    logic.UpdateGameState((GameState) message);
                 } else {
 //                    System.out.printf("Response: %s\n\n", message.toString());
                 }

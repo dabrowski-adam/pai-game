@@ -1,5 +1,9 @@
 package com.adamdabrowski.game;
 
+import com.adamdabrowski.server.GameState;
+import com.adamdabrowski.server.Player;
+
+import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -10,6 +14,7 @@ public class Logic {
     private final Queue<String> chat;
     boolean isLoggedIn;
     boolean isInLobby;
+    GameState gameState;
 
     // Client state
     boolean isChatOpen;
@@ -20,6 +25,7 @@ public class Logic {
         chat = new LinkedBlockingQueue<String>(5);
         isLoggedIn = false;
         isInLobby = false;
+        gameState = new GameState(new ArrayList<Player>(), 100f); // TODO: Get from config
 
         isChatOpen = false;
     }
@@ -33,6 +39,14 @@ public class Logic {
             chat.remove();
         }
         chat.add(message);
+    }
+
+    public void UpdateGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    public GameState GetGameState() {
+        return this.gameState;
     }
 
     public String GetMessages() {

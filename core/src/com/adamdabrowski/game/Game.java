@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Align;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.net.Socket;
 
 public class Game extends ApplicationAdapter {
 	SpriteBatch batch;
+	ShapeRenderer shapeRenderer;
 	BitmapFont font;
 	ChatInput chatInput;
 //	Texture img;
@@ -32,6 +34,7 @@ public class Game extends ApplicationAdapter {
 		logic = Logic.getInstance();
 		actionQueue = ActionQueue.getInstance();
 
+		shapeRenderer = new ShapeRenderer();
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		font.setColor(Color.WHITE);
@@ -57,12 +60,21 @@ public class Game extends ApplicationAdapter {
 
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		batch.begin();
-		font.draw(batch, logic.GetMessages(), w - 200 - 10, h - 10, 200, Align.left, true);
+		// Ground
+		shapeRenderer.setColor(Color.GREEN);
+		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+		shapeRenderer.circle(w / 2, h / 2, logic.gameState.radius);
+		shapeRenderer.end();
 
+		batch.begin();
+		// Chat history
+		font.draw(batch, logic.GetMessages(), w - 200 - 10, h - 10, 200, Align.left, true);
+		// Lobby status
 		String lobbyMsg = logic.isInLobby ? "Will join next game" : "Will not join next game";
 		font.draw(batch, lobbyMsg, w - 200 - 10, 30, 200, Align.center, false);
 		batch.end();
+
+
 	}
 	
 	@Override
